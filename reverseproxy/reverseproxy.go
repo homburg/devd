@@ -78,7 +78,7 @@ func NewSingleHostReverseProxy(target *url.URL, ci inject.CopyInject) *ReversePr
 		// work on text response
 		req.Header.Set("Accept-Encoding", "identity")
 
-		req.Host = req.URL.Host
+		// req.Host = req.URL.Host
 		if targetQuery == "" || req.URL.RawQuery == "" {
 			req.URL.RawQuery = targetQuery + req.URL.RawQuery
 		} else {

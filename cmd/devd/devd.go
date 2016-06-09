@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"os"
 	"path"
+	"strings"
 
 	"github.com/cortesi/devd"
 	"github.com/cortesi/termlog"
@@ -182,6 +183,16 @@ func main() {
 		hdrs.Set("Access-Control-Allow-Origin", "*")
 	}
 
+	filteredRoutes := make([]string, 0)
+	for _, spec := range *routes {
+		if strings.Contains(spec, ": ") {
+			parts := strings.Split(spec, ": ")
+			hdrs.Set(parts[0], parts[1])
+		} else {
+			filteredRoutes = append(filteredRoutes, spec)
+		}
+	}
+
 	dd := devd.Devd{
 		// Shaping
 		Latency:  *latency,
@@ -199,7 +210,7 @@ func main() {
 		Credentials: creds,
 	}
 
-	if err := dd.AddRoutes(*routes); err != nil {
+	if err := dd.AddRoutes(filteredRoutes); err != nil {
 		kingpin.Fatalf("%s", err)
 	}
 
